@@ -20,6 +20,12 @@ async function runAppleScript(script: string): Promise<string> {
   return stdout.trim();
 }
 
+// Escape a string for safe interpolation into an AppleScript double-quoted string.
+// Must escape backslashes first, then double-quotes.
+function asEscape(value: string): string {
+  return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+}
+
 // ─── Server ───────────────────────────────────────────────────────────────────
 
 const server = new McpServer({
@@ -89,7 +95,7 @@ Use the album name exactly as returned by photos_list_albums.`,
     },
   },
   async ({ album_name }) => {
-    const safe = album_name.replace(/"/g, '\\"');
+    const safe = asEscape(album_name);
     const script = `
 tell application "Photos"
   try
@@ -141,7 +147,7 @@ Searches titles, descriptions, keywords, and filenames.`,
     },
   },
   async ({ query }) => {
-    const safe = query.replace(/"/g, '\\"');
+    const safe = asEscape(query);
     const script = `
 tell application "Photos"
   set foundItems to search for "${safe}"
@@ -189,7 +195,7 @@ Get IDs from photos_get_album_photos or photos_search_photos.`,
     },
   },
   async ({ photo_id }) => {
-    const safe = photo_id.replace(/"/g, '\\"');
+    const safe = asEscape(photo_id);
     const script = `
 tell application "Photos"
   try
@@ -260,8 +266,8 @@ Get the photo ID from photos_get_album_photos or photos_search_photos.`,
     },
   },
   async ({ photo_id, export_folder }) => {
-    const safeId = photo_id.replace(/"/g, '\\"');
-    const safePath = export_folder.replace(/"/g, '\\"');
+    const safeId = asEscape(photo_id);
+    const safePath = asEscape(export_folder);
     const script = `
 tell application "Photos"
   try
@@ -310,7 +316,7 @@ Get the photo ID from photos_get_album_photos or photos_search_photos.`,
     },
   },
   async ({ photo_id }) => {
-    const safe = photo_id.replace(/"/g, '\\"');
+    const safe = asEscape(photo_id);
     const script = `
 tell application "Photos"
   try
