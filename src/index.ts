@@ -144,9 +144,9 @@ Searches titles, descriptions, keywords, and filenames.`,
     const safe = query.replace(/"/g, '\\"');
     const script = `
 tell application "Photos"
-  set results to search for "${safe}"
+  set foundItems to search for "${safe}"
   set output to ""
-  repeat with m in results
+  repeat with m in foundItems
     set mid to id of m
     set mfile to filename of m
     set mdate to date of m as string
